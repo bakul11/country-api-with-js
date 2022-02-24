@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,700;1,500&display=swap"
+        rel="stylesheet">
+    <title>load Data form Country Api</title>
+</head>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        text-transform: capitalize;
+    }
+
+    #showData {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 2rem;
+    }
+
+    .design {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        padding: 30px 10px;
+
+        text-align: center;
+    }
+</style>
+
+<body class="container">
+
+    <h2 class="text-center mt-5 mb-5 fw-bold">Total Country Load : <span id="showTotal" class="text-danger"></span></h2>
+
+    <div id="showTopData" class="card col-md-6 mx-auto mt-5 mb-5 text-center">
+
+    </div>
+    <div id="showData">
+
+    </div>
+
+
+    <!-- JavaScript File Start -->
+    <script>
+        fetch('https://restcountries.com/v3.1/all')
+            .then(res => res.json())
+            .then(data => {
+                const cutingData = data.slice(20, 41);
+                handleLoadData(cutingData)
+
+            })
+
+        // handleLoadData Function
+        const handleLoadData = (data) => {
+            document.getElementById('showTotal').innerText = data.length;
+            const showData = document.getElementById('showData');
+            data.map(data => {
+                const h3 = document.createElement('div');
+                h3.classList.add('design');
+                h3.innerHTML = `<h5 class="fw-bold">${data.name.common}</h5>
+                <button type="button" class="btn btn-primary" onclick="handleShowDetails('${data.name.common}')">Show Details</button>
+                `
+                    ;
+                showData.appendChild(h3);
+            })
+        }
+        // handleShowDetails Function
+        const handleShowDetails = (name) => {
+            fetch(`https://restcountries.com/v3.1/name/${name}`)
+                .then(res => res.json())
+                .then(data => {
+                    const getData = data[0];
+                    const showTopData = document.getElementById('showTopData');
+                    showTopData.classList.add('card');
+                    showTopData.innerHTML = ` <img src="${getData.flags.png}" alt="img-fluid" style="height:200px">
+                     <h5 class="fw-bold mt-4" ><span class="text-danger">Country Name : </span> ${getData.name.common}</h5 >
+                     <p class="fw-bold mt-4" ><span class="text-danger">Population : </span> ${getData.population}</p >
+                    `
+                })
+        }
+
+    </script>
+</body>
+
+</html>
